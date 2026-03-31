@@ -1,0 +1,206 @@
+import { NextResponse } from "next/server";
+import clientPromise from "@/lib/mongodb";
+
+export async function GET() {
+    try {
+        const client = await clientPromise;
+        const db = client.db("elob2b");
+        const userscollection = db.collection("users");
+        const itemscollection = db.collection("items");
+        await userscollection.deleteMany({});
+        await itemscollection.deleteMany({});
+
+        const seedusers = [{
+            username: "elo",
+            password: "elo1",
+            role: "admin",
+            averageRating: 0,
+            givenRatings: [],
+            reviews: []
+        }, {
+            username: "user1",
+            password: "user1",
+            role: "user",
+            averageRating: 0,
+            givenRatings: [],
+            reviews: []
+        }, {
+            username: "user2",
+            password: "user2",
+            role: "user",
+            averageRating: 0,
+            givenRatings: [],
+            reviews: []
+        }, {
+            username: "user3",
+            password: "user3",
+            role: "user",
+            averageRating: 0,
+            givenRatings: [],
+            reviews: []
+        }];
+
+        const seeditems = [{
+            name: "Plak (The Beatles)",
+            description: "1960'lardan kalma orijinal baskı- The Beatles - 1962 - 1966 - ***japonya Baskı*** - Dönem Baskı Plak - Longplay - Lp",
+            price: 1500,
+            seller: "Bi Dünya Plak",
+            image: "https://productimages.hepsiburada.net/s/777/424-600/110001178824289.jpg/format:webp",
+            category: "Vinyls",
+            condition: "used",
+            age: 60,
+            rating: 0,
+            reviews: [],
+            ratings: []
+        }, {
+            name: "Fransız Antika Sandalye",
+            description: "El Oyması Fransız Antika Sandalye 1800'lü Yıllara Ait 19. yüzyıl sonu",
+            price: 5000,
+            seller: "Antikacı Ziya",
+            image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSwUEcQ2UBZVmIl1KwXrgWJ4VNL73cH0bkgng&s",
+            category: "Antique Furniture",
+            condition: "used",
+            age: 120,
+            material: "Ahşap",
+            rating: 0,
+            reviews: [],
+            ratings: []
+        }, {
+            name: "GPS Koşu Saati",
+            description: "Kalp atış hızı ölçer ve GPS özellikli",
+            price: 2500,
+            seller: "Spor Dünyası",
+            image: "https://m.media-amazon.com/images/I/71e1AtMFVwL._AC_SY300_SX300_QL70_ML2_.jpg",
+            category: "GPS Sport Watches",
+            condition: "new",
+            batteryLife: "14 Gün",
+            rating: 0,
+            reviews: [],
+            ratings: []
+        }, {
+            name: "Nike GP Challenge Pro Koşu Ayakkabısı",
+            description: "Rahat ve esnek koşu ayakkabısı",
+            price: 5499,
+            seller: "Ayakkabı Center",
+            image: "https://static.nike.com/a/images/t_web_pdp_535_v2/f_auto,u_9ddf04c7-2a9a-4d76-add1-d15af8f0263d,c_scale,fl_relative,w_1.0,h_1.0,fl_layer_apply/b3e20dce-72e7-4dc1-a855-11230c2af926/M+ZOOM+GP+CHALLENGE+PRO+HC.png",
+            category: "Running Shoes",
+            condition: "new",
+            size: 42,
+            material: "Kumaş",
+            rating: 0,
+            reviews: [],
+            ratings: []
+        }, {
+            name: "4 Kişilik Kamp Çadırı",
+            description: "Su geçirmez, kolay kurulum kamp çadırı",
+            price: 3200,
+            seller: "Kampçı Market",
+            image: "https://cdn.akakce.com/z/quechua/quechua-arpenaz-4-1-family-4-kisilik.jpg",
+            category: "Camping Tents",
+            condition: "new",
+            rating: 0,
+            reviews: [],
+            ratings: []
+        }, {
+            name: "Jazz Plak Koleksiyonu",
+            description: "En iyi jazz sanatçılarından derleme",
+            price: 800,
+            seller: "Ahmet Plak",
+            image: "https://preview.redd.it/coltrane-vinyl-collection-v0-s6zxvlv7k1rd1.jpg?width=1080&crop=smart&auto=webp&s=7ddeb35a75dc1ca0bb3f6bb2ab82622cd75d70cf",
+            category: "Vinyls",
+            condition: "used",
+            age: 30,
+            rating: 0,
+            reviews: [],
+            ratings: []
+        }, {
+            name: "Ufak Akıllı Spor Saati",
+            description: "Aktivite takipli akıllı saat",
+            price: 1500,
+            seller: "Spor Dünyası",
+            image: "https://m.media-amazon.com/images/I/612irKf4brL._AC_SY300_SX300_QL70_ML2_.jpg",
+            category: "GPS Sport Watches",
+            condition: "used",
+            batteryLife: "7 Gün",
+            rating: 0,
+            reviews: [],
+            ratings: []
+        }, {
+            name: "Antika Masa",
+            description: "Ceviz ağacından el yapımı masa",
+            price: 12000,
+            seller: "Antikacı Ziya",
+            image: "https://www.ahsapdiyarim.com/wp-content/uploads/2021/08/CEviz-Masa-4-600x450.jpeg",
+            category: "Antique Furniture",
+            condition: "used",
+            age: 100,
+            material: "Ceviz",
+            rating: 0,
+            reviews: [],
+            ratings: []
+        }];
+
+        await itemscollection.insertMany(seeditems);
+        await userscollection.insertMany(seedusers);
+        const insertedusers = await userscollection.find({}).toArray();
+        const inserteditems = await itemscollection.find({}).toArray();
+
+        // Döngülerle herkes her ürünü birer kez oyluyor:
+        for (const user of insertedusers) {
+            // Hocanın kuralı: Oylamaları ve yorumları admin yapmasın!
+            if (user.role === "admin") continue;
+
+            for (const item of inserteditems) {
+                const randomscore = Math.floor(Math.random() * 5) + 1;
+                const newrating = { userId: user._id.toString(), username: user.username, value: randomscore };
+                const newreview = {
+                    userId: user._id.toString(),
+                    username: user.username,
+                    text: `Bu ürünü (${item.name}) harika buldum, kesinlikle tavsiye ederim!`,
+                    createdAt: new Date().toISOString()
+                };
+
+                // Array'lere Push mantığı ile yorum ve rating objesini hem user hem item içine kopyalıyoruz
+                await itemscollection.updateOne(
+                    { _id: item._id },
+                    { $push: { ratings: newrating, reviews: newreview } } as any
+                );
+
+                await userscollection.updateOne(
+                    { _id: user._id },
+                    {
+                        $push: {
+                            givenRatings: { itemId: item._id.toString(), itemName: item.name, value: randomscore },
+                            reviews: { itemId: item._id.toString(), itemName: item.name, text: newreview.text }
+                        }
+                    } as any
+                );
+            }
+        }
+
+        // --- Ortalama Yeniden Hesaplama Mantığı ---
+        // Madem her şeye rastgele bir sürü puan atandı, averageRating'i topluca hesaplayıp veritabanındaki yerlerine "set" edelim
+        const updatedItems = await itemscollection.find({}).toArray();
+        for (const it of updatedItems) {
+            if (it.ratings && it.ratings.length > 0) {
+                const sum = it.ratings.reduce((acc: number, r: any) => acc + r.value, 0);
+                const avg = sum / it.ratings.length;
+                await itemscollection.updateOne({ _id: it._id }, { $set: { rating: parseFloat(avg.toFixed(1)) } });
+            }
+        }
+
+        const updatedUsers = await userscollection.find({}).toArray();
+        for (const usr of updatedUsers) {
+            if (usr.givenRatings && usr.givenRatings.length > 0) {
+                const sum = usr.givenRatings.reduce((acc: number, r: any) => acc + r.value, 0);
+                const avg = sum / usr.givenRatings.length;
+                await userscollection.updateOne({ _id: usr._id }, { $set: { averageRating: parseFloat(avg.toFixed(1)) } });
+            }
+        }
+
+        return NextResponse.json({ message: "Veritabanı oluşturuldu." });
+    } catch (error) {
+        console.error("Veritabanı oluşturulamadı.", error);
+        return NextResponse.json({ message: "Bir hata oluştu." }, { status: 500 });
+    }
+}
