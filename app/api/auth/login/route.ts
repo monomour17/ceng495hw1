@@ -8,8 +8,8 @@ export async function POST(request: Request) {
         const { username, password } = body;
 
         if (!username || !password) {
-            // HATA 1 DÜZELDİ: { status: 400 } ayrıldı.
-            return NextResponse.json({ error: "Kullanıcı adı ve şifre girmek gerekir." }, { status: 400 });
+            // FIX 1: { status: 400 } separated.
+            return NextResponse.json({ error: "Username and password are required." }, { status: 400 });
         }
 
         const client = await clientPromise;
@@ -18,12 +18,12 @@ export async function POST(request: Request) {
 
         const user = await userscollection.findOne({ username });
         if (!user) {
-            return NextResponse.json({ error: "Kullanıcı bulunamadı." }, { status: 401 });
+            return NextResponse.json({ error: "User not found." }, { status: 401 });
         }
 
-        // HATA 3 DÜZELDİ: bcrypt mantığı askıya alındı, şifre direkt kontrol ediliyor.
+        // FIX 3: bcrypt logic suspended, password is checked directly.
         if (password !== user.password) {
-            return NextResponse.json({ error: "Şifre yanlış." }, { status: 401 });
+            return NextResponse.json({ error: "Incorrect password." }, { status: 401 });
         }
 
         const sessiondata = {
@@ -41,10 +41,10 @@ export async function POST(request: Request) {
             path: "/"
         });
 
-        return NextResponse.json({ message: "Giriş başarılı." });
+        return NextResponse.json({ message: "Login successful." });
 
     } catch (error) {
-        // HATA 2 DÜZELDİ: Try bloğu en son burada kapanıyor.
-        return NextResponse.json({ error: "Bir hata oluştu." }, { status: 500 });
+        // FIX 2: Try block closes here.
+        return NextResponse.json({ error: "An error occurred." }, { status: 500 });
     }
 }

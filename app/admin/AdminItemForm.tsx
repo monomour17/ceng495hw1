@@ -25,13 +25,13 @@ export default function AdminItemForm() {
         });
         const json = await res.json();
         if (res.ok) {
-            setMessage("✓ Ürün eklendi!");
+            setMessage("✓ Product added!");
             setIsError(false);
             form.reset();
             setCategory("Vinyls");
             router.refresh();
         } else {
-            setMessage(json.error || "Hata oluştu.");
+            setMessage(json.error || "An error occurred.");
             setIsError(true);
         }
         setLoading(false);
@@ -41,39 +41,39 @@ export default function AdminItemForm() {
 
     return (
         <form onSubmit={handleSubmit} className="flex flex-col gap-3">
-            <input name="name" required placeholder="Ürün Adı *" className={inputCls} />
-            <textarea name="description" required placeholder="Açıklama *" rows={2} className={inputCls + " resize-none"} />
+            <input name="name" required placeholder="Product Name *" className={inputCls} />
+            <textarea name="description" required placeholder="Description *" rows={2} className={inputCls + " resize-none"} />
             <div className="grid grid-cols-2 gap-3">
-                <input name="price" type="number" min="0" step="0.01" required placeholder="Fiyat ($) *" className={inputCls} />
-                <input name="seller" required placeholder="Satıcı *" className={inputCls} />
+                <input name="price" type="number" min="0" step="0.01" required placeholder="Price ($) *" className={inputCls} />
+                <input name="seller" required placeholder="Seller *" className={inputCls} />
             </div>
-            <input name="image" placeholder="Görsel URL (opsiyonel)" className={inputCls} />
+            <input name="image" placeholder="Image URL (optional)" className={inputCls} />
             <div className="grid grid-cols-2 gap-3">
                 <select name="category" value={category} onChange={(e) => setCategory(e.target.value)} className={inputCls}>
                     {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
                 </select>
                 <select name="condition" className={inputCls}>
-                    <option value="new">Yeni</option>
-                    <option value="used">İkinci El</option>
+                    <option value="new">New</option>
+                    <option value="used">Used</option>
                 </select>
             </div>
 
-            {/* Kategoriye özel alanlar */}
+            {/* Category-specific fields */}
             {category === "GPS Sport Watches" && (
-                <input name="batteryLife" placeholder="Batarya Ömrü (ör: 14 Gün)" className={inputCls} />
+                <input name="batteryLife" placeholder="Battery Life (e.g. 14 Days)" className={inputCls} />
             )}
             {(category === "Antique Furniture" || category === "Vinyls") && (
-                <input name="age" type="number" placeholder="Yaş (yıl)" className={inputCls} />
+                <input name="age" type="number" placeholder="Age (years)" className={inputCls} />
             )}
             {category === "Running Shoes" && (
-                <input name="size" placeholder="Numara (ör: 42)" className={inputCls} />
+                <input name="size" placeholder="Size (e.g. 42)" className={inputCls} />
             )}
             {(category === "Antique Furniture" || category === "Running Shoes") && (
-                <input name="material" placeholder="Malzeme (ör: Ahşap, Deri)" className={inputCls} />
+                <input name="material" placeholder="Material (e.g. Wood, Leather)" className={inputCls} />
             )}
 
             <button type="submit" disabled={loading} className="w-full bg-blue-600 text-white font-bold py-2.5 rounded-xl hover:bg-blue-700 transition disabled:opacity-50">
-                {loading ? "Ekleniyor..." : "Ürün Ekle"}
+                {loading ? "Adding..." : "Add Product"}
             </button>
             {message && <p className={`text-sm ${isError ? "text-red-500" : "text-emerald-600 dark:text-emerald-400"}`}>{message}</p>}
         </form>

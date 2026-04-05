@@ -10,19 +10,19 @@ async function checkAdmin() {
     return user.role === "admin" ? user : null;
 }
 
-// POST /api/admin/items — Yeni ürün ekle
+// POST /api/admin/items — Add new product
 export async function POST(request: Request) {
     try {
         const admin = await checkAdmin();
         if (!admin) {
-            return NextResponse.json({ error: "Yetkisiz erişim." }, { status: 403 });
+            return NextResponse.json({ error: "Unauthorized access." }, { status: 403 });
         }
 
         const body = await request.json();
         const { name, description, price, seller, image, category, condition, batteryLife, age, size, material } = body;
 
         if (!name || !description || !price || !seller || !category || !condition) {
-            return NextResponse.json({ error: "Zorunlu alanlar eksik." }, { status: 400 });
+            return NextResponse.json({ error: "Required fields are missing." }, { status: 400 });
         }
 
         const newItem: any = {
@@ -47,9 +47,9 @@ export async function POST(request: Request) {
         const db = client.db("elob2b");
         const result = await db.collection("items").insertOne(newItem);
 
-        return NextResponse.json({ message: "Ürün eklendi.", id: result.insertedId.toString() });
+        return NextResponse.json({ message: "Product added.", id: result.insertedId.toString() });
     } catch (error) {
         console.error(error);
-        return NextResponse.json({ error: "Bir hata oluştu." }, { status: 500 });
+        return NextResponse.json({ error: "An error occurred." }, { status: 500 });
     }
 }

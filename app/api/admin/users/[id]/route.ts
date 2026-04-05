@@ -11,7 +11,7 @@ async function checkAdmin() {
     return user.role === "admin" ? user : null;
 }
 
-// DELETE /api/admin/users/[id] — Kullanıcıyı ve ilgili tüm verileri sil
+// DELETE /api/admin/users/[id] — Delete user and all related data
 export async function DELETE(
     _request: Request,
     { params }: { params: Promise<{ id: string }> }
@@ -19,7 +19,7 @@ export async function DELETE(
     try {
         const admin = await checkAdmin();
         if (!admin) {
-            return NextResponse.json({ error: "Yetkisiz erişim." }, { status: 403 });
+            return NextResponse.json({ error: "Unauthorized access." }, { status: 403 });
         }
 
         const { id } = await params;
@@ -32,15 +32,15 @@ export async function DELETE(
 
         const targetUser = await usersColl.findOne({ _id: userObjId });
         if (!targetUser) {
-            return NextResponse.json({ error: "Kullanıcı bulunamadı." }, { status: 404 });
+            return NextResponse.json({ error: "User not found." }, { status: 404 });
         }
 
-        // Admin kendini silemesin
+        // Prevent admin from deleting themselves
         if (id === admin._id) {
-            return NextResponse.json({ error: "Kendi hesabınızı silemezsiniz." }, { status: 400 });
+            return NextResponse.json({ error: "You cannot delete your own account." }, { status: 400 });
         }
 
-        // Tüm item'lardan bu kullanıcının rating ve review'larını sil
+        // Remove this user's ratings and reviews from all items
         await itemsColl.updateMany(
             {},
             {
@@ -51,7 +51,7 @@ export async function DELETE(
             }
         );
 
-        // Item rating ortalamalarını güncelle (etkilenen item'lar)
+        // Update item rating averages (affected items)
         const allItems = await itemsColl.find({}).toArray();
         for (const item of allItems) {
             const ratings = item.ratings || [];
@@ -61,12 +61,12 @@ export async function DELETE(
             await itemsColl.updateOne({ _id: item._id }, { $set: { rating: avg } });
         }
 
-        // Kullanıcıyı sil
+        // Delete user
         await usersColl.deleteOne({ _id: userObjId });
 
-        return NextResponse.json({ message: "Kullanıcı silindi." });
+        return NextResponse.json({ message: "User deleted." });
     } catch (error) {
         console.error(error);
-        return NextResponse.json({ error: "Bir hata oluştu." }, { status: 500 });
+        return NextResponse.json({ error: "An error occurred." }, { status: 500 });
     }
 }

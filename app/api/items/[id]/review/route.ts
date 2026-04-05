@@ -11,7 +11,7 @@ export async function POST(
         const cookieStore = await cookies();
         const sessionCookie = cookieStore.get("elob2bauth");
         if (!sessionCookie) {
-            return NextResponse.json({ error: "Giriş yapmalısınız." }, { status: 401 });
+            return NextResponse.json({ error: "You must be logged in." }, { status: 401 });
         }
         const user = JSON.parse(sessionCookie.value);
 
@@ -19,7 +19,7 @@ export async function POST(
         const body = await request.json();
         const { text } = body;
         if (!text || text.trim() === "") {
-            return NextResponse.json({ error: "Yorum boş olamaz." }, { status: 400 });
+            return NextResponse.json({ error: "Review cannot be empty." }, { status: 400 });
         }
 
         const client = await clientPromise;
@@ -30,14 +30,14 @@ export async function POST(
         const itemId = new ObjectId(id);
         const item = await itemsColl.findOne({ _id: itemId });
         if (!item) {
-            return NextResponse.json({ error: "Ürün bulunamadı." }, { status: 404 });
+            return NextResponse.json({ error: "Product not found." }, { status: 404 });
         }
 
         const existingReviewIndex = (item.reviews || []).findIndex((r: any) => r.userId === user._id);
         const now = new Date().toISOString();
 
         if (existingReviewIndex !== -1) {
-            // Mevcut yorumu "Edit: " prefix ile güncelle
+            // Update existing review with "Edit: " prefix
             const existingText = item.reviews[existingReviewIndex].text;
             const updatedText = existingText + " Edit: " + text.trim();
             await itemsColl.updateOne(
@@ -45,7 +45,7 @@ export async function POST(
                 { $set: { "reviews.$.text": updatedText, "reviews.$.updatedAt": now } }
             );
 
-            // Kullanıcının reviews'ını da güncelle
+            // Also update the user's reviews
             const userObjId = new ObjectId(user._id);
             const dbUser = await usersColl.findOne({ _id: userObjId });
             const userReviewIndex = (dbUser?.reviews || []).findIndex((r: any) => r.itemId === id);
@@ -58,9 +58,9 @@ export async function POST(
                 );
             }
 
-            return NextResponse.json({ message: "Yorum güncellendi." });
+            return NextResponse.json({ message: "Review updated." });
         } else {
-            // Yeni yorum ekle
+            // Add new review
             const newReview = {
                 userId: user._id,
                 username: user.username,
@@ -72,16 +72,16 @@ export async function POST(
                 { $push: { reviews: newReview } } as any
             );
 
-            // Kullanıcının reviews array'ine ekle
+            // Add to user's reviews array
             await usersColl.updateOne(
                 { _id: new ObjectId(user._id) },
                 { $push: { reviews: { itemId: id, itemName: item.name, text: text.trim() } } } as any
             );
 
-            return NextResponse.json({ message: "Yorum eklendi." });
+            return NextResponse.json({ message: "Review added." });
         }
     } catch (error) {
         console.error(error);
-        return NextResponse.json({ error: "Bir hata oluştu." }, { status: 500 });
+        return NextResponse.json({ error: "An error occurred." }, { status: 500 });
     }
 }

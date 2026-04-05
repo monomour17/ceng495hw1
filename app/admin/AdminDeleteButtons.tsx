@@ -9,8 +9,8 @@ export default function AdminDeleteButtons({ type, id, name }: { type: "item" | 
 
     const handleDelete = async () => {
         const confirmMsg = type === "item"
-            ? `"${name}" ürünü silinecek. Emin misiniz?`
-            : `"${name}" kullanıcısı silinecek. Emin misiniz?`;
+            ? `The product "${name}" will be deleted. Are you sure?`
+            : `The user "${name}" will be deleted. Are you sure?`;
         if (!confirm(confirmMsg)) return;
 
         setLoading(true);
@@ -20,7 +20,7 @@ export default function AdminDeleteButtons({ type, id, name }: { type: "item" | 
             router.refresh();
         } else {
             const json = await res.json();
-            alert(json.error || "Silme işlemi başarısız.");
+            alert(json.error || "Delete operation failed.");
         }
         setLoading(false);
     };
@@ -31,7 +31,7 @@ export default function AdminDeleteButtons({ type, id, name }: { type: "item" | 
             disabled={loading}
             className="shrink-0 bg-red-100 text-red-600 hover:bg-red-200 font-semibold text-xs px-3 py-1.5 rounded-lg transition disabled:opacity-50"
         >
-            {loading ? "..." : "Sil"}
+            {loading ? "..." : "Delete"}
         </button>
     );
 }

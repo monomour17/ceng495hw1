@@ -11,7 +11,7 @@ export async function POST(
         const cookieStore = await cookies();
         const sessionCookie = cookieStore.get("elob2bauth");
         if (!sessionCookie) {
-            return NextResponse.json({ error: "Giriş yapmalısınız." }, { status: 401 });
+            return NextResponse.json({ error: "You must be logged in." }, { status: 401 });
         }
         const user = JSON.parse(sessionCookie.value);
 
@@ -19,7 +19,7 @@ export async function POST(
         const body = await request.json();
         const value = parseInt(body.value);
         if (isNaN(value) || value < 1 || value > 5) {
-            return NextResponse.json({ error: "Geçersiz puan (1-5 arası olmalı)." }, { status: 400 });
+            return NextResponse.json({ error: "Invalid rating (must be between 1-5)." }, { status: 400 });
         }
 
         const client = await clientPromise;
@@ -30,27 +30,27 @@ export async function POST(
         const itemId = new ObjectId(id);
         const item = await itemsColl.findOne({ _id: itemId });
         if (!item) {
-            return NextResponse.json({ error: "Ürün bulunamadı." }, { status: 404 });
+            return NextResponse.json({ error: "Product not found." }, { status: 404 });
         }
 
-        // Kullanıcının daha önce oy verip vermediğini kontrol et
+        // Check if user has already voted
         const existingRating = (item.ratings || []).find((r: any) => r.userId === user._id);
 
         if (existingRating) {
-            // Üstüne yaz
+            // Overwrite existing
             await itemsColl.updateOne(
                 { _id: itemId, "ratings.userId": user._id },
                 { $set: { "ratings.$.value": value } }
             );
         } else {
-            // Yeni ekle
+            // Add new
             await itemsColl.updateOne(
                 { _id: itemId },
                 { $push: { ratings: { userId: user._id, username: user.username, value } } } as any
             );
         }
 
-        // Item ortalama rating'i yeniden hesapla
+        // Recalculate item average rating
         const updatedItem = await itemsColl.findOne({ _id: itemId });
         const ratings = updatedItem?.ratings || [];
         const avg = ratings.length > 0
@@ -58,7 +58,7 @@ export async function POST(
             : 0;
         await itemsColl.updateOne({ _id: itemId }, { $set: { rating: avg } });
 
-        // Kullanıcının givenRatings'ini güncelle
+        // Update user's givenRatings
         const userObjId = new ObjectId(user._id);
         const dbUser = await usersColl.findOne({ _id: userObjId });
         const existingUserRating = (dbUser?.givenRatings || []).find((r: any) => r.itemId === id);
@@ -75,7 +75,7 @@ export async function POST(
             );
         }
 
-        // Kullanıcı averageRating'i yeniden hesapla
+        // Recalculate user averageRating
         const updatedUser = await usersColl.findOne({ _id: userObjId });
         const userRatings = updatedUser?.givenRatings || [];
         const userAvg = userRatings.length > 0
@@ -83,9 +83,9 @@ export async function POST(
             : 0;
         await usersColl.updateOne({ _id: userObjId }, { $set: { averageRating: userAvg } });
 
-        return NextResponse.json({ message: "Puan verildi.", rating: avg });
+        return NextResponse.json({ message: "Rating submitted.", rating: avg });
     } catch (error) {
         console.error(error);
-        return NextResponse.json({ error: "Bir hata oluştu." }, { status: 500 });
+        return NextResponse.json({ error: "An error occurred." }, { status: 500 });
     }
 }

@@ -10,29 +10,29 @@ async function checkAdmin() {
     return user.role === "admin" ? user : null;
 }
 
-// POST /api/admin/users — Yeni kullanıcı ekle
+// POST /api/admin/users — Add new user
 export async function POST(request: Request) {
     try {
         const admin = await checkAdmin();
         if (!admin) {
-            return NextResponse.json({ error: "Yetkisiz erişim." }, { status: 403 });
+            return NextResponse.json({ error: "Unauthorized access." }, { status: 403 });
         }
 
         const body = await request.json();
         const { username, password, role } = body;
 
         if (!username || !password) {
-            return NextResponse.json({ error: "Kullanıcı adı ve şifre zorunlu." }, { status: 400 });
+            return NextResponse.json({ error: "Username and password are required." }, { status: 400 });
         }
 
         const client = await clientPromise;
         const db = client.db("elob2b");
         const usersColl = db.collection("users");
 
-        // Username benzersizlik kontrolü
+        // Username uniqueness check
         const existing = await usersColl.findOne({ username });
         if (existing) {
-            return NextResponse.json({ error: "Bu kullanıcı adı zaten alınmış." }, { status: 409 });
+            return NextResponse.json({ error: "This username is already taken." }, { status: 409 });
         }
 
         const newUser = {
@@ -45,9 +45,9 @@ export async function POST(request: Request) {
         };
 
         const result = await usersColl.insertOne(newUser);
-        return NextResponse.json({ message: "Kullanıcı eklendi.", id: result.insertedId.toString() });
+        return NextResponse.json({ message: "User added.", id: result.insertedId.toString() });
     } catch (error) {
         console.error(error);
-        return NextResponse.json({ error: "Bir hata oluştu." }, { status: 500 });
+        return NextResponse.json({ error: "An error occurred." }, { status: 500 });
     }
 }

@@ -2,15 +2,15 @@
 
 An e-commerce web application built with **Next.js 16** and **MongoDB Atlas**, deployed on **Vercel**.
 
-## 🌐 Live Deployment
+##  Live Deployment
 
 **Vercel URL:** `https://<your-vercel-url>.vercel.app`
 
-> ⚠️ Replace the URL above with your actual Vercel deployment URL before submission.
+>  Replace the URL above with your actual Vercel deployment URL before submission.
 
 ---
 
-## 🔑 How to Use the Application
+##  How to Use the Application
 
 ### First-Time Setup (Seeding the Database)
 
@@ -22,7 +22,7 @@ https://<your-vercel-url>.vercel.app/api/seed
 
 This will create **8 items** (across all 5 required categories), **3 regular users**, and **1 admin user**, with every user rating and reviewing every item.
 
-> ⚠️ Calling `/api/seed` resets the entire database. Only run it once, or to reset demo data.
+>  Calling `/api/seed` resets the entire database. Only run it once, or to reset demo data.
 
 ---
 
@@ -37,7 +37,7 @@ Navigate to the home page and click **"Giriş Yap"** (Login).
 | Username | `elo`  |
 | Password | `elo1` |
 
-After logging in as admin, a **"⚡ Admin Paneli"** button appears in the navigation bar, linking to the admin dashboard at `/admin`.
+After logging in as admin, a **" Admin Paneli"** button appears in the navigation bar, linking to the admin dashboard at `/admin`.
 
 #### Regular User Accounts
 
@@ -51,7 +51,7 @@ After logging in as a regular user, clicking your **username** in the navbar tak
 
 ---
 
-## 📋 Features
+##  Features
 
 ### Home Page (`/`)
 - Lists all items for sale with product cards (image, name, category, price, rating)
@@ -80,7 +80,7 @@ After logging in as a regular user, clicking your **username** in the navbar tak
 
 ---
 
-## 🏗️ Architecture & Design Decisions
+##  Architecture & Design Decisions
 
 ### Programming Language & Framework
 
@@ -145,7 +145,7 @@ The application is deployed to **Vercel** directly from a private GitHub reposit
 
 ---
 
-## 📁 Project Structure
+##  Project Structure
 
 ```
 elob2bapp/
@@ -183,7 +183,7 @@ elob2bapp/
 
 ---
 
-## 🛠️ Running Locally
+##  Running Locally
 
 1. Clone the repository
 2. Install dependencies:
@@ -203,7 +203,7 @@ elob2bapp/
 
 ---
 
-## 📦 Item Categories & Sample Data
+## Item Categories & Sample Data
 
 | Category | Items in DB | Category-Specific Fields |
 |----------|-------------|--------------------------|

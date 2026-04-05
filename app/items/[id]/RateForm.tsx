@@ -21,10 +21,10 @@ export default function RateForm({ itemId, currentRating }: { itemId: string; cu
         });
         const data = await res.json();
         if (res.ok) {
-            setMessage(`✓ Puanınız kaydedildi (${value}/5)`);
+            setMessage(`✓ Your rating has been saved (${value}/5)`);
             router.refresh();
         } else {
-            setMessage(data.error || "Hata oluştu.");
+            setMessage(data.error || "An error occurred.");
         }
         setLoading(false);
     };
@@ -32,7 +32,7 @@ export default function RateForm({ itemId, currentRating }: { itemId: string; cu
     return (
         <div className="border border-zinc-200 dark:border-zinc-800 rounded-xl p-4 bg-white dark:bg-zinc-900">
             <p className="text-sm font-semibold mb-3">
-                {currentRating ? `Mevcut puanınız: ${currentRating}/5 — Güncellemek için tıklayın:` : "Bu ürünü puanlayın:"}
+                {currentRating ? `Your current rating: ${currentRating}/5 — Click to update:` : "Rate this product:"}
             </p>
             <div className="flex gap-1">
                 {[1, 2, 3, 4, 5].map((star) => (

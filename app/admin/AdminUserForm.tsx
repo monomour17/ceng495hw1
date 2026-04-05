@@ -22,12 +22,12 @@ export default function AdminUserForm() {
         });
         const json = await res.json();
         if (res.ok) {
-            setMessage("✓ Kullanıcı eklendi!");
+            setMessage("✓ User added!");
             setIsError(false);
             form.reset();
             router.refresh();
         } else {
-            setMessage(json.error || "Hata oluştu.");
+            setMessage(json.error || "An error occurred.");
             setIsError(true);
         }
         setLoading(false);
@@ -37,14 +37,14 @@ export default function AdminUserForm() {
 
     return (
         <form onSubmit={handleSubmit} className="flex flex-col gap-3">
-            <input name="username" required placeholder="Kullanıcı Adı *" className={inputCls} />
-            <input name="password" required placeholder="Şifre *" className={inputCls} />
+            <input name="username" required placeholder="Username *" className={inputCls} />
+            <input name="password" required placeholder="Password *" className={inputCls} />
             <select name="role" className={inputCls}>
-                <option value="user">Normal Kullanıcı</option>
+                <option value="user">Regular User</option>
                 <option value="admin">Admin</option>
             </select>
             <button type="submit" disabled={loading} className="w-full bg-emerald-600 text-white font-bold py-2.5 rounded-xl hover:bg-emerald-700 transition disabled:opacity-50">
-                {loading ? "Ekleniyor..." : "Kullanıcı Ekle"}
+                {loading ? "Adding..." : "Add User"}
             </button>
             {message && <p className={`text-sm ${isError ? "text-red-500" : "text-emerald-600 dark:text-emerald-400"}`}>{message}</p>}
         </form>
