@@ -1,6 +1,7 @@
 import clientPromise from "@/lib/mongodb";
 import Link from "next/link";
 import { cookies } from "next/headers";
+import LogoutButton from "@/app/components/LogoutButton";
 
 export default async function Home({ searchParams }: { searchParams: Promise<{ category?: string }> }) {
   const cookieStore = await cookies();
@@ -40,9 +41,7 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ c
                   👤 {user.username}
                 </Link>
               )}
-              <a href="/api/auth/logout" className="bg-red-500 font-semibold text-white px-4 py-2 rounded-xl hover:bg-red-600 transition text-sm">
-                Log Out
-              </a>
+              <LogoutButton className="bg-red-500 font-semibold text-white px-4 py-2 rounded-xl hover:bg-red-600 transition text-sm" />
             </div>
           ) : (
             <Link href="/login" className="bg-blue-600 font-semibold text-white px-5 py-2.5 rounded-xl hover:bg-blue-700 transition">

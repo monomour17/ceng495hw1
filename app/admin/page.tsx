@@ -5,6 +5,7 @@ import Link from "next/link";
 import AdminItemForm from "./AdminItemForm";
 import AdminUserForm from "./AdminUserForm";
 import AdminDeleteButtons from "./AdminDeleteButtons";
+import LogoutButton from "@/app/components/LogoutButton";
 
 export default async function AdminPage() {
     // Admin check
@@ -29,7 +30,7 @@ export default async function AdminPage() {
                         <Link href="/" className="text-blue-500 hover:underline text-sm">← Home</Link>
                         <h1 className="text-3xl font-extrabold mt-1">Admin Panel</h1>
                     </div>
-                    <a href="/api/auth/logout" className="bg-red-500 text-white font-semibold px-4 py-2 rounded-xl hover:bg-red-600 transition text-sm">Log Out</a>
+                    <LogoutButton className="bg-red-500 text-white font-semibold px-4 py-2 rounded-xl hover:bg-red-600 transition text-sm" />
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">

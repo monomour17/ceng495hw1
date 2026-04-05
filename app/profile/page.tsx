@@ -3,6 +3,7 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { ObjectId } from "mongodb";
 import Link from "next/link";
+import LogoutButton from "@/app/components/LogoutButton";
 
 export default async function ProfilePage() {
     const cookieStore = await cookies();
@@ -28,7 +29,7 @@ export default async function ProfilePage() {
                 {/* Top bar */}
                 <div className="flex justify-between items-center mb-8 border-b pb-4 border-zinc-200 dark:border-zinc-800">
                     <Link href="/" className="text-blue-500 hover:underline font-semibold text-sm">← Back to Home</Link>
-                    <a href="/api/auth/logout" className="bg-red-500 text-white font-semibold px-4 py-2 rounded-xl hover:bg-red-600 transition text-sm">Log Out</a>
+                    <LogoutButton className="bg-red-500 text-white font-semibold px-4 py-2 rounded-xl hover:bg-red-600 transition text-sm" />
                 </div>
 
                 {/* Profile card */}

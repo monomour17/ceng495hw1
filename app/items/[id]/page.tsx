@@ -5,6 +5,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import RateForm from "./RateForm";
 import ReviewForm from "./ReviewForm";
+import LogoutButton from "@/app/components/LogoutButton";
 
 export default async function ItemDetailPage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = await params;
@@ -56,7 +57,7 @@ export default async function ItemDetailPage({ params }: { params: Promise<{ id:
                             {user.role !== "admin" && <Link href="/profile" className="text-blue-500 hover:underline">My Profile</Link>}
                             {user.role === "admin" && <Link href="/admin" className="text-blue-500 hover:underline">Admin Panel</Link>}
                             {" · "}
-                            <a href="/api/auth/logout" className="text-red-500 hover:underline">Log Out</a>
+                            <LogoutButton className="text-red-500 hover:underline" />
                         </span>
                     ) : (
                         <Link href="/login" className="bg-blue-600 text-white px-4 py-2 rounded-xl font-semibold text-sm hover:bg-blue-700 transition">Log In</Link>
